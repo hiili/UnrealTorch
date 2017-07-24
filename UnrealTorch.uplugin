@@ -16,7 +16,7 @@
 	"Modules": [
 		{
 			"Name": "UnrealTorch",
-			"Type": "Developer",
+			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}
 	]
