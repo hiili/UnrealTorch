@@ -5,7 +5,7 @@ using UnrealBuildTool;
 
 public class Sol2 : ModuleRules
 {
-	public Sol2(TargetInfo Target)
+	public Sol2(ReadOnlyTargetRules Target) : base(Target)
 	{
 		Type = ModuleType.External;
 

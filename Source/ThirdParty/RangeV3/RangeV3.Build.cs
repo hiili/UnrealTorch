@@ -5,10 +5,10 @@ using UnrealBuildTool;
 
 public class RangeV3 : ModuleRules
 {
-	public RangeV3(TargetInfo Target)
+	public RangeV3(ReadOnlyTargetRules Target) : base(Target)
 	{
 		Type = ModuleType.External;
 
-        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Range-V3-VS2015/include"));
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Range-V3-VS2015/include"));
 	}
 }
