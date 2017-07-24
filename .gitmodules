@@ -1,3 +1,6 @@
 [submodule "Source/ThirdParty/RangeV3/Range-V3-VS2015"]
 	path = Source/ThirdParty/RangeV3/Range-V3-VS2015
 	url = https://github.com/Microsoft/Range-V3-VS2015.git
+[submodule "Source/ThirdParty/Sol2/include/sol2"]
+	path = Source/ThirdParty/Sol2/include/sol2
+	url = https://github.com/ThePhD/sol2.git
