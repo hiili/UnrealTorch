@@ -83,44 +83,44 @@ void UeLogProxy( ELogVerbosity::Type verbosity, const std::string & message )
 
 FUnrealTorchModule::FUnrealTorchModule() :
 	thirdPartyDlls{ 
-		// cd Source/ThirdParty/Torch/WindowsTorch/install/
-		// find * -name '*.dll' | sed 's_\(.*\)_{ "Source/ThirdParty/Torch/bin/\1", 0 },_'
+		// cd Source/ThirdParty/Torch/WindowsTorch
+		// find bin/ -name '*.dll' | sed 's_\(.*\)_{ "Source/ThirdParty/Torch/WindowsTorch/\1", 0 },_'
 		// wc -l  --> 23
 		//
 		// Note that order is important! Dependencies must be loaded before their dependents.
 
 		// Lua
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libluajit.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/lua51.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libluajit.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/lua51.dll", 0 },
 
 		// MSYS2 for LAPACK
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libquadmath-0.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libgcc_s_seh-1.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libgfortran-3.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libwinpthread-1.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libquadmath-0.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libgcc_s_seh-1.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libgfortran-3.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libwinpthread-1.dll", 0 },
 
 		// LAPACK
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libblas.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/liblapack.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libblas.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/liblapack.dll", 0 },
 
 		// Torch
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/TH.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/luaT.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/TH.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/luaT.dll", 0 },
 
 		// the rest
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/ffi.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/lfs.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libimage.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libnnx.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libpaths.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libppm.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libsundown.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libsys.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libTHNN.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libtmglib.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/libtorch.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/lib/mime/core.dll", 0 },
-		{ "Source/ThirdParty/Torch/WindowsTorch/install/lib/socket/core.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/ffi.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/lfs.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libimage.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libnnx.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libpaths.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libppm.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libsundown.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libsys.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libTHNN.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libtmglib.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/libtorch.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/mime/core.dll", 0 },
+		{ "Source/ThirdParty/Torch/WindowsTorch/bin/socket/core.dll", 0 },
 }
 {}
 
@@ -175,13 +175,12 @@ void FUnrealTorchModule::StartupModule()
 		// Redefine package.path and package.cpath
 		lua["package"]["path"] =
 			BaseDirPlugin + "/Source/UnrealTorch/Private/lua/?.lua;" +
-			BaseDirPlugin + "/Source/ThirdParty/Torch/WindowsTorch/install/lua/?.lua;" +
-			BaseDirPlugin + "/Source/ThirdParty/Torch/WindowsTorch/install/lua/?/init.lua;" +
+			BaseDirPlugin + "/Source/ThirdParty/Torch/WindowsTorch/lua/?.lua;" +
+			BaseDirPlugin + "/Source/ThirdParty/Torch/WindowsTorch/lua/?/init.lua;" +
 			BaseDirGameContent + "/Lua/?.lua;" +
 			BaseDirGameContent + "/Lua/?/init.lua";   // no semicolon at end to avoid getting ;; by accident later
 		lua["package"]["cpath"] =
-			BaseDirPlugin + "/Source/ThirdParty/Torch/WindowsTorch/install/?.dll;" +
-			BaseDirPlugin + "/Source/ThirdParty/Torch/WindowsTorch/install/lib/?.dll;" +
+			BaseDirPlugin + "/Source/ThirdParty/Torch/WindowsTorch/bin/?.dll;" +
 			BaseDirGameContent + "/Lua/bin/?.dll";   // no semicolon at end to avoid getting ;; by accident later
 
 
