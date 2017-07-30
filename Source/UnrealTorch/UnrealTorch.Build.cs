@@ -64,7 +64,7 @@ public class UnrealTorch : ModuleRules
 			);
 
 
-		// Have the Lua files included during packaging
+		// Have our Lua files included during packaging
 		//
 		// cd Source/UnrealTorch/
 		// find Private/lua/ -type f | sed 's_\(.*\)_RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(ModuleDirectory, "\1")));_'

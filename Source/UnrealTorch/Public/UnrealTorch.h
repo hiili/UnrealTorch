@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "ModuleManager.h"
+
+#include <string>
 #include <vector>
 
 
@@ -26,6 +28,6 @@ private:
 		void * handle;
 	};
 
-	/** The set of dlls that we will load */
+	/** Torch dlls */
 	std::vector<ThirdPartyDll> thirdPartyDlls;
 };
