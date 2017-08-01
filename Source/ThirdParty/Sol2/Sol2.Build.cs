@@ -9,6 +9,7 @@ public class Sol2 : ModuleRules
 	{
 		Type = ModuleType.External;
 
+        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
         PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "include"));
 	}
 }

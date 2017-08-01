@@ -9,6 +9,7 @@ public class RangeV3 : ModuleRules
 	{
 		Type = ModuleType.External;
 
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
 		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Range-V3-VS2015/include"));
 	}
 }
