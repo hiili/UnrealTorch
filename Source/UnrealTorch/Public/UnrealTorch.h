@@ -5,11 +5,18 @@
 #include "CoreMinimal.h"
 #include "ModuleManager.h"
 
-#include <string>
-#include <vector>
+
+#include <memory>
+
+
+class WindowsTorch;
+
+
 
 
 DECLARE_LOG_CATEGORY_EXTERN( LogUnrealTorch, Log, All );
+
+
 
 
 class FUnrealTorchModule : public IModuleInterface
@@ -20,19 +27,7 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 
-
 private:
 
-	/** A single dll that we will load */
-	struct ThirdPartyDll
-	{
-		std::string name;
-		void * handle;
-	};
-
-	/** Torch dlls
-	 * 
-	 * We cannot move this into the Torch module, because including it into the .uplugin file would cause UBT to try to
-	 * (re)compile also all C files from Torch itself. */
-	static std::vector<ThirdPartyDll> thirdPartyDlls;
+	std::unique_ptr<WindowsTorch> windowsTorch;
 };

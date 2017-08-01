@@ -12,6 +12,7 @@ public class Torch : ModuleRules
 		if (Target.Platform == UnrealTargetPlatform.Win64)
 		{
 			// Add include and lib paths
+			PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
 			PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "WindowsTorch/include"));
 			PublicLibraryPaths.Add(Path.Combine(ModuleDirectory, "WindowsTorch/lib"));
 
