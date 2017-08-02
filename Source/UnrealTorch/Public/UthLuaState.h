@@ -40,11 +40,11 @@ public:
 	* A global table 'uth' is created with the following structure:
 	*   uth                                  The main table for all UnrealTorch data
 	*     .ue                                Data from UE
+	*       .UE_LOG( verbosity, message )    Write log entries to UE log
+	*       .ELogVerbosity                   Verbosity level enumeration for UE_LOG()
 	*       .BuildShippingOrTest             True if UE is running in Shipping or Test configuration
 	*       .FPaths                          UE path information
 	*         .GameLogDir                    Log directory path from FPaths::GameLogDir()
-	*       .UE_LOG( verbosity, message )    Write log entries to UE log
-	*       .ELogVerbosity                   Verbosity level enumeration for UE_LOG()
 	*
 	* The package.path variable is set to include the following locations, in this order:
 	*   1. UnrealTorch's own Lua files: <pluginroot>/Source/UnrealTorch/Private/lua/?.lua
