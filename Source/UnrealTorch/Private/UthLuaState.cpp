@@ -33,13 +33,12 @@ void UeLogProxy( ELogVerbosity::Type verbosity, const std::string & message )
 
 
 UUthLuaState::UUthLuaState()
-{}
-
-
-void UUthLuaState::construct()
 {
-	// make sure that we don't yet have a Lua state
-	checkf( !lua, TEXT("Lua state already exists! Maybe the construct() method has been already called?") );
+	// Stop if the plugin is not loaded yet (probably UE is just creating an internal instance of us).
+	// The field 'lua' will stay null and isValid() will return false for this object.
+	// 
+	// Note: IsModuleLoaded() returns true even if StartupModule() is still running.
+	if( !FModuleManager::Get().IsModuleLoaded( "UnrealTorch" ) ) return;
 
 
 	// Get base directories
@@ -87,3 +86,9 @@ void UUthLuaState::construct()
 
 UUthLuaState::~UUthLuaState()
 {}
+
+
+bool UUthLuaState::isValid()
+{
+	return !!lua;
+}
