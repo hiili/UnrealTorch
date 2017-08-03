@@ -20,6 +20,9 @@ DEFINE_LOG_CATEGORY( LogWindowsTorch );
 
 
 
+/**
+ * Manages Torch DLL loading and freeing.
+ */
 class WindowsTorch
 {
 
@@ -28,17 +31,18 @@ public:
 	/** Does not load dlls. Call loadDlls() to do that. */
 	WindowsTorch();
 
-	/** Does unload all dlls, if not unloaded already. */
+	/** Frees all dlls loaded by us, if not freed already. */
 	virtual ~WindowsTorch();
 
-	/** Load all Torch dlls.
+	/** Makes sure that all Torch dlls are loaded for this process.
+	 * 
+	 * Dll reference count will become incremented; call freeDlls() to decrement.
 	 *
-	 * @return    True on success, false otherwise.
-	 */
+	 * @return    True on success, false otherwise. */
 	bool loadDlls();
 
-	/** Unload all Torch dlls. */
-	void unloadDlls();
+	/** Frees all Torch dlls (decrement their reference count). */
+	void freeDlls();
 
 
 private:
@@ -104,7 +108,7 @@ bool WindowsTorch::loadDlls()
 
 
 
-void WindowsTorch::unloadDlls()
+void WindowsTorch::freeDlls()
 {
 	for( auto & dll : thirdPartyDlls )
 	{
@@ -112,7 +116,7 @@ void WindowsTorch::unloadDlls()
 		dll.handle = nullptr;
 	}
 
-	UE_LOG( LogWindowsTorch, Log, TEXT( "Unloaded all Torch DLLs." ) );
+	UE_LOG( LogWindowsTorch, Log, TEXT( "Freed all Torch DLLs." ) );
 }
 
 
@@ -165,5 +169,5 @@ WindowsTorch::WindowsTorch() :
 
 WindowsTorch::~WindowsTorch()
 {
-	unloadDlls();
+	freeDlls();
 }
