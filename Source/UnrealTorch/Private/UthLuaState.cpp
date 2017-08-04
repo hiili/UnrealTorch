@@ -80,7 +80,10 @@ UUthLuaState::UUthLuaState()
 					 "Verbose", ELogVerbosity::Verbose,
 					 "VeryVerbose", ELogVerbosity::VeryVerbose
 	);
-	(*lua)["uth"] = lua->create_table_with( "ue", uth_ue );
+	(*lua)["uth"] = lua->create_table_with(
+		"statename", "default",
+		"ue", uth_ue
+	);
 
 	// call Lua-side initialization script
 	try
@@ -103,4 +106,26 @@ UUthLuaState::~UUthLuaState()
 bool UUthLuaState::isValid()
 {
 	return !!lua;
+}
+
+
+
+
+void UUthLuaState::setName( const std::string & name_ )
+{
+	check( isValid() );
+
+	name = name_;
+
+	// Set it also in Lualand
+	(*lua)["uth"]["statename"] = name;
+
+	// Re-redirect Lua output accordingly
+	(*lua)["uth"]["utility"]["redirect_output"]();
+}
+
+
+const std::string & UUthLuaState::getName()
+{
+	return name;
 }

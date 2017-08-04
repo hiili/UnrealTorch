@@ -16,6 +16,7 @@
 -- We assume that the global variable 'uth' has been already set from the C++ side with the following structure:
 --
 --   uth                                  The main table for all UnrealTorch data
+--     .statename                         Name of this state; see UUthLuaState.setName()
 --     .ue                                Static data from UE
 --       .UE_LOG( verbosity, message )    Write log entries to UE log
 --       .ELogVerbosity                   Verbosity level enumeration for UE_LOG()

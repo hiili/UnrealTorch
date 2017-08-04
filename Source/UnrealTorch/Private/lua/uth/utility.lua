@@ -79,7 +79,7 @@ end
 -- Redirecting stderr seems tricky so we ignore that.
 function utility.redirect_output()
 
-  local logfile = uth.ue.FPaths.GameLogDir .. 'lua.log'
+  local logfile = uth.ue.FPaths.GameLogDir .. 'lua_' .. uth.statename .. '.log'
 
   uth.ue.UE_LOG( uth.ue.ELogVerbosity.Log, 'Redirecting Lua print() and io.write() to \'' .. logfile .. '\'' )
   print = utility.print

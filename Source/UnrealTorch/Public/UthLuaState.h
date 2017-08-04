@@ -32,6 +32,7 @@ public:
 	 *
 	 * A global variable 'uth' is created with the following structure:
 	 *   uth                                  The main table for all UnrealTorch data
+	 *     .statename                         Name of this state; see UUthLuaState.setName()
 	 *     .ue                                Data from UE
 	 *       .UE_LOG( verbosity, message )    Write log entries to UE log
 	 *       .ELogVerbosity                   Verbosity level enumeration for UE_LOG()
@@ -57,8 +58,26 @@ public:
 	bool isValid();
 
 
+	/** Set the name of the state.
+	 *
+	 * All log output from Lua will be redirected to Saved\Logs\lua_<name>.log. All states that do not have a name log
+	 * into \Saved\Logs\lua_default.log.
+	 */
+	void setName( const std::string & name );
+
+	/** Returns the current name of the state.
+	 *
+	 * Initially all states are named 'default'.
+	 */
+	const std::string & getName();
+
+
+private:
 
 	/** Sol-wrapped Lua state instance */
 	std::unique_ptr<sol::state> lua;
+
+	/** The name of this Lua state. See setName(). */
+	std::string name{ "default" };
 
 };
