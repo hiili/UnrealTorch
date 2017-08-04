@@ -17,7 +17,7 @@
 /**
  * 
  */
-UCLASS( Category = "UnrealTorch|Lua", meta = (DisplayName = "Lua State") )
+UCLASS( Blueprintable, BlueprintType, meta = (DisplayName = "Lua State") )
 class UNREALTORCH_API UUthLuaState : public UObject
 {
 	GENERATED_BODY()
@@ -63,13 +63,15 @@ public:
 	 * All log output from Lua will be redirected to Saved\Logs\lua_<name>.log. All states that do not have a name log
 	 * into \Saved\Logs\lua_default.log.
 	 */
-	void setName( const std::string & name );
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	void setName( const FName & name );
 
 	/** Returns the current name of the state.
 	 *
 	 * Initially all states are named 'default'.
 	 */
-	const std::string & getName();
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	const FName & getName();
 
 
 private:
@@ -78,6 +80,6 @@ private:
 	std::unique_ptr<sol::state> lua;
 
 	/** The name of this Lua state. See setName(). */
-	std::string name{ "default" };
+	FName name{ "default" };
 
 };

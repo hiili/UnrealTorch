@@ -111,21 +111,21 @@ bool UUthLuaState::isValid()
 
 
 
-void UUthLuaState::setName( const std::string & name_ )
+void UUthLuaState::setName( const FName & name_ )
 {
 	check( isValid() );
 
 	name = name_;
 
 	// Set it also in Lualand
-	(*lua)["uth"]["statename"] = name;
+	(*lua)["uth"]["statename"] = std::string( TCHAR_TO_UTF8( *name.ToString() ) );    // Sol seems to eat TCHARs too, but play safe; std::string is needed to avoid some macro issue or whatever
 
 	// Re-redirect Lua output accordingly
 	(*lua)["uth"]["utility"]["redirect_output"]();
 }
 
 
-const std::string & UUthLuaState::getName()
+const FName & UUthLuaState::getName()
 {
 	return name;
 }
