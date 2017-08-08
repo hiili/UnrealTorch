@@ -103,9 +103,27 @@ UUthLuaState::~UUthLuaState()
 {}
 
 
+void UUthLuaState::destroy()
+{
+	// Remove from root set, if rooted
+	if( IsRooted() ) RemoveFromRoot();
+
+	// Immediately delete the Lua state (can be null already)
+	lua.reset();
+
+	// Trigger the UObject destruction process
+	// 
+	// ConditionalBeginDestroy() is advocated by many @ answerhub, but the (sparse) documentation on it suggests it's
+	// not the right way. Use staff answer from
+	// https://answers.unrealengine.com/questions/12111/destruction-of-uobjects.html
+	// Note that UE references to the object won't be cleared before the next GC sweep!
+	MarkPendingKill();    // we must be unrooted!
+}
+
+
 bool UUthLuaState::isValid()
 {
-	return !!lua;
+	return lua && !IsPendingKill();
 }
 
 

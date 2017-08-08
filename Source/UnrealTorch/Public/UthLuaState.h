@@ -54,7 +54,15 @@ public:
 	/** No-op. */
 	virtual ~UUthLuaState();
 
-	/** Checks whether the object is in a valid, usable state. */
+	/** Immediately deletes the Lua state and starts the UObject destruction process.
+	 *
+	 * This method is safe to call even if the object has been added to the GC root set, in which case it will be
+	 * unrooted first.
+	 */
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	void destroy();
+
+	/** Checks whether the object is in a valid, usable state: the Lua state exists, UObject is not pending kill, .. */
 	bool isValid();
 
 
