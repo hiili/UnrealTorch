@@ -24,31 +24,39 @@ class UNREALTORCH_API UUthLuaState : public UObject
 
 public:
 
+	// comment block copy at UUthBlueprintStatics::CreateLuaState()
 	/** Constructs a new UthLuaState object, creating a new Lua state and initializing it.
 	 *
-	 * A new sol::state is created and initialized with all Torch-related paths set, necessary packages and dlls loaded,
+	 * A new Lua state is created and initialized with all Torch-related paths set, necessary packages and dlls loaded,
 	 * and a set of utility functions defined.
 	 *
 	 * All Lua standard libraries are opened.
 	 *
 	 * A global variable 'uth' is created with the following structure:
-	 *   uth                                  The main table for all UnrealTorch data
-	 *     .statename                         Name of this state; see UUthLuaState.setName()
-	 *     .ue                                Data from UE
-	 *       .UE_LOG( verbosity, message )    Write log entries to UE log
-	 *       .ELogVerbosity                   Verbosity level enumeration for UE_LOG()
-	 *       .BuildShippingOrTest             True if UE is running in Shipping or Test configuration
-	 *       .FPaths                          UE path information
-	 *         .GameLogDir                    Log directory path from FPaths::GameLogDir()
+	 *   uth								The main table for all UnrealTorch data
+	 *     .statename						Name of this state; see UUthLuaState.setName()
+	 *     .ue								Data from UE
+	 *       .UE_LOG( verbosity, message )	Write log entries to UE log
+	 *       .ELogVerbosity					Verbosity level enumeration for UE_LOG()
+	 *       .BuildShippingOrTest			True if UE is running in Shipping or Test configuration
+	 *       .FPaths						UE path information
+	 *         .GameLogDir					Log directory path from FPaths::GameLogDir()
 	 *
 	 * The package.path variable is set to include the following locations, in this order:
-	 *   1. UnrealTorch's own Lua files: <pluginroot>/Source/UnrealTorch/Private/lua/?.lua
-	 *   2. Torch's Lua files: <pluginroot>/Source/ThirdParty/Torch/WindowsTorch/lua/?.lua and
-	 *      <pluginroot>/Source/ThirdParty/Torch/WindowsTorch/lua/?/init.lua
-	 *   3. Project level Lua files: <root>/Content/Lua/?.lua and <root>/Content/Lua/?/init.lua
+	 *   1. UnrealTorch Lua files
+	 *   2. Torch Lua files
+	 *   3. Project level Lua files: Content/Lua/?.lua and Content/Lua/?/init.lua
+	 *
 	 * The package.cpath variable is set to include the following locations, in this order:
-	 *   1. Torch DLLs: <pluginroot>/Source/ThirdParty/Torch/WindowsTorch/bin/?.dll 2. Project level DLLs:
-	 *   <root>/Content/Lua/bin/?.dll */
+	 *   1. Torch DLLs
+	 *   2. Project level DLLs: Content/Lua/bin/?.dll
+	 *
+	 * Object lifecycle and garbage collection:
+	 *
+	 * When a new Lua state is created using the Blueprint helper function CreateLuaState(), it will be added to the
+	 * root set of UObjects and thus excluded from garbage collection. Use UUthLuaState::destroy() to send it toward
+	 * destruction. It is safe to call RemoveFromRoot() on the created object if you wish to put it under GC.
+	 */
 	UUthLuaState();
 
 	/** No-op. */
@@ -66,7 +74,7 @@ public:
 	bool isValid();
 
 
-	/** Set the name of the state.
+	/** Sets the name of the state.
 	 *
 	 * All log output from Lua will be redirected to Saved\Logs\lua_<name>.log. All states that do not have a name log
 	 * into \Saved\Logs\lua_default.log.
@@ -74,10 +82,7 @@ public:
 	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
 	void setName( const FName & name );
 
-	/** Returns the current name of the state.
-	 *
-	 * Initially all states are named 'default'.
-	 */
+	/** Returns the current name of the state. */
 	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
 	const FName & getName();
 

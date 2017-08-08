@@ -46,7 +46,7 @@ UUthLuaState::UUthLuaState()
 	std::string BaseDirGameContent = TCHAR_TO_UTF8( *FPaths::GameContentDir() );
 	std::string BaseDirGameLogs = TCHAR_TO_UTF8( *FPaths::GameLogDir() );
 
-	// create a sol-wrapped Lua state
+	// Create a sol-wrapped Lua state
 	lua = std::make_unique<sol::state>();
 
 	// Open all standard libraries
@@ -133,12 +133,11 @@ void UUthLuaState::setName( const FName & name_ )
 {
 	check( isValid() );
 
+	// Store it
 	name = name_;
 
-	// Set it also in Lualand
+	// Set it in Lualand and re-redirect Lua output accordingly
 	(*lua)["uth"]["statename"] = std::string( TCHAR_TO_UTF8( *name.ToString() ) );    // Sol seems to eat TCHARs too, but play safe; std::string is needed to avoid some macro issue or whatever
-
-	// Re-redirect Lua output accordingly
 	(*lua)["uth"]["utility"]["redirect_output"]();
 }
 
