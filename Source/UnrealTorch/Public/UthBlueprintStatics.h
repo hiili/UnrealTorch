@@ -14,6 +14,7 @@ class UNREALTORCH_API UUthBlueprintStatics : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	
+public:
 	
 	
 	
