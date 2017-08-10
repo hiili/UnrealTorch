@@ -58,4 +58,8 @@ public:
 	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
 	static UUthLuaState * CreateLuaState( FName name = FName( "default" ) );
 	
+	/** Generates a unique Lua state name that is safe to use in an immediately following CreateLuaState() call. */
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	static FName MakeUniqueLuaStateName( FName baseName = FName( "default" ) );
+
 };

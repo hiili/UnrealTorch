@@ -7,8 +7,9 @@
 
 #include "UEWrappedSol2.h"
 
-#include <string>
+#include <set>
 #include <memory>
+#include <string>
 
 
 
@@ -32,6 +33,11 @@ void UeLogProxy( ELogVerbosity::Type verbosity, const std::string & message )
 
 
 
+std::set<FName> UUthLuaState::stateNamesInUse;
+
+
+
+
 UUthLuaState::UUthLuaState()
 {
 	// Stop if the plugin is not loaded yet (probably UE is just creating an internal instance of us).
@@ -40,6 +46,11 @@ UUthLuaState::UUthLuaState()
 	// Note: IsModuleLoaded() returns true even if StartupModule() is still running.
 	if( !FModuleManager::Get().IsModuleLoaded( "UnrealTorch" ) ) return;
 
+
+	// Set the internal name of the object (we do not touch the UObject name system)
+	// Don't use setName() as it uses the utility module, which is not loaded yet
+	name = UUthBlueprintStatics::MakeUniqueLuaStateName( "default" );
+	stateNamesInUse.emplace( name );
 
 	// Get base directories
 	std::string BaseDirPlugin = TCHAR_TO_UTF8( *IPluginManager::Get().FindPlugin( "UnrealTorch" )->GetBaseDir() );
@@ -81,7 +92,7 @@ UUthLuaState::UUthLuaState()
 					 "VeryVerbose", ELogVerbosity::VeryVerbose
 	);
 	(*lua)["uth"] = lua->create_table_with(
-		"statename", "default",
+		"statename", TCHAR_TO_UTF8( *name.ToString() ),
 		"ue", uth_ue
 	);
 
@@ -105,6 +116,9 @@ UUthLuaState::~UUthLuaState()
 
 void UUthLuaState::destroy()
 {
+	// Permit the name to be reused
+	stateNamesInUse.erase( getName() );
+
 	// Remove from root set, if rooted
 	if( IsRooted() ) RemoveFromRoot();
 
@@ -129,16 +143,28 @@ bool UUthLuaState::isValid()
 
 
 
-void UUthLuaState::setName( const FName & name_ )
+bool UUthLuaState::setName( FName newName )
 {
 	check( isValid() );
 
+	// Allow setting the same name, which will be no-op
+	if( newName == getName() ) return true;
+
+	// Fail if the new name is already taken
+	if( stateNamesInUse.find( newName ) != stateNamesInUse.end() ) return false;
+
+	// Free the old name and reserve the new name
+	stateNamesInUse.erase( getName() );
+	stateNamesInUse.emplace( newName );
+
 	// Store it
-	name = name_;
+	name = newName;
 
 	// Set it in Lualand and re-redirect Lua output accordingly
 	(*lua)["uth"]["statename"] = std::string( TCHAR_TO_UTF8( *name.ToString() ) );    // Sol seems to eat TCHARs too, but play safe; std::string is needed to avoid some macro issue or whatever
 	(*lua)["uth"]["utility"]["redirect_output"]();
+
+	return true;
 }
 
 
