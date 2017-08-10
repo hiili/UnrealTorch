@@ -9,7 +9,7 @@
 #include <memory>
 
 
-class WindowsTorch;
+class WindowsTorchLoader;
 
 
 
@@ -29,5 +29,5 @@ public:
 
 private:
 
-	std::unique_ptr<WindowsTorch> windowsTorch;
+	std::unique_ptr<WindowsTorchLoader> windowsTorchLoader;
 };

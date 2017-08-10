@@ -27,9 +27,10 @@ void FUnrealTorchModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
-	windowsTorch = std::make_unique<WindowsTorch>();
-	check( windowsTorch );
-	windowsTorch->loadDlls();
+	// Create dll loader and load dlls
+	windowsTorchLoader = std::make_unique<WindowsTorchLoader>();
+	check( windowsTorchLoader );
+	windowsTorchLoader->loadDlls();
 }
 
 
@@ -40,7 +41,7 @@ void FUnrealTorchModule::ShutdownModule()
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
 
-	windowsTorch.reset();    // will free dlls in destructor
+	windowsTorchLoader.reset();    // will free dlls in destructor
 }
 
 

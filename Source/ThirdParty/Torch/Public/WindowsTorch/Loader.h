@@ -23,16 +23,16 @@ DEFINE_LOG_CATEGORY( LogWindowsTorch );
 /**
  * Manages Torch DLL loading and freeing.
  */
-class WindowsTorch
+class WindowsTorchLoader
 {
 
 public:
 
 	/** Does not load dlls. Call loadDlls() to do that. */
-	WindowsTorch();
+	WindowsTorchLoader();
 
 	/** Frees all dlls loaded by us, if not freed already. */
-	virtual ~WindowsTorch();
+	virtual ~WindowsTorchLoader();
 
 	/** Makes sure that all Torch dlls are loaded for this process.
 	 * 
@@ -74,7 +74,7 @@ private:
 
 
 
-bool WindowsTorch::loadDlls()
+bool WindowsTorchLoader::loadDlls()
 {
 	// Get base directories
 	std::string BaseDirPlugin = TCHAR_TO_UTF8( *IPluginManager::Get().FindPlugin( "UnrealTorch" )->GetBaseDir() );
@@ -108,7 +108,7 @@ bool WindowsTorch::loadDlls()
 
 
 
-void WindowsTorch::freeDlls()
+void WindowsTorchLoader::freeDlls()
 {
 	for( auto & dll : thirdPartyDlls )
 	{
@@ -122,7 +122,7 @@ void WindowsTorch::freeDlls()
 
 
 
-WindowsTorch::WindowsTorch() :
+WindowsTorchLoader::WindowsTorchLoader() :
 	thirdPartyDlls
 	{
 		// cd Source/ThirdParty/Torch/WindowsTorch
@@ -167,7 +167,7 @@ WindowsTorch::WindowsTorch() :
 {}
 
 
-WindowsTorch::~WindowsTorch()
+WindowsTorchLoader::~WindowsTorchLoader()
 {
 	freeDlls();
 }
