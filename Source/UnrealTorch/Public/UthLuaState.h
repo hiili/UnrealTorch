@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 
-#include "UEWrappedSol2.h"    // unique_ptr and forward declarations do not seem to play with UBT..
+#include "UEWrappedSol2.h"    // UBT does not seem to play with unique_ptr and forward declarations..
 
 #include <memory>
 
@@ -15,7 +15,7 @@
 
 
 /**
- * 
+ * Represents a Lua state.
  */
 UCLASS( Blueprintable, BlueprintType, meta = (DisplayName = "Lua State") )
 class UNREALTORCH_API UUthLuaState : public UObject
@@ -26,7 +26,8 @@ public:
 
 	/** Constructs a new UthLuaState object, creating a new Lua state and initializing it.
 	 *
-	 * A new sol::state is created.
+	 * A new sol::state is created and initialized with all Torch-related paths set, necessary packages and dlls loaded,
+	 * and a set of utility functions defined.
 	 *
 	 * All Lua standard libraries are opened.
 	 *
@@ -46,9 +47,8 @@ public:
 	 *      <pluginroot>/Source/ThirdParty/Torch/WindowsTorch/lua/?/init.lua
 	 *   3. Project level Lua files: <root>/Content/Lua/?.lua and <root>/Content/Lua/?/init.lua
 	 * The package.cpath variable is set to include the following locations, in this order:
-	 *   1. Torch DLLs: <pluginroot>/Source/ThirdParty/Torch/WindowsTorch/bin/?.dll
-	 *   2. Project level DLLs: <root>/Content/Lua/bin/?.dll
-	 */
+	 *   1. Torch DLLs: <pluginroot>/Source/ThirdParty/Torch/WindowsTorch/bin/?.dll 2. Project level DLLs:
+	 *   <root>/Content/Lua/bin/?.dll */
 	UUthLuaState();
 
 	/** No-op. */
