@@ -36,19 +36,5 @@ UUthLuaState * UUthBlueprintStatics::CreateLuaState( FName name /*= FName( "defa
 
 FName UUthBlueprintStatics::MakeUniqueLuaStateName( FName baseName /*= FName( "default" ) */ )
 {
-	// Already unique?
-	if( UUthLuaState::stateNamesInUse.find( baseName ) != UUthLuaState::stateNamesInUse.end() )
-	{
-		// No, add running suffix
-		std::string uniqueName;
-		std::string uniqueNameBase = TCHAR_TO_UTF8( *baseName.ToString() );
-		int uniqueNameSuffix = 1;
-		do {
-			uniqueName = uniqueNameBase + "_" + std::to_string( uniqueNameSuffix++ );
-		} while( UUthLuaState::stateNamesInUse.find( FName( uniqueName.c_str() ) ) != UUthLuaState::stateNamesInUse.end() );
-
-		baseName = FName( uniqueName.c_str() );
-	}
-
-	return baseName;
+	return UUthLuaState::MakeUniqueLuaStateName( baseName );
 }

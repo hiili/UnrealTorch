@@ -49,7 +49,7 @@ UUthLuaState::UUthLuaState()
 
 	// Set the internal name of the object (we do not touch the UObject name system)
 	// Don't use setName() as it uses the Lualand utility module, which is not loaded yet
-	name = UUthBlueprintStatics::MakeUniqueLuaStateName( "default" );
+	name = MakeUniqueLuaStateName( "default" );
 	stateNamesInUse.emplace( name );
 
 	// Get base directories
@@ -171,4 +171,24 @@ bool UUthLuaState::setName( FName newName )
 const FName & UUthLuaState::getName()
 {
 	return name;
+}
+
+
+FName UUthLuaState::MakeUniqueLuaStateName( FName baseName /*= FName( "default" ) */ )
+{
+	// Already unique?
+	if( stateNamesInUse.find( baseName ) != stateNamesInUse.end() )
+	{
+		// No, add running suffix
+		std::string uniqueName;
+		std::string uniqueNameBase = TCHAR_TO_UTF8( *baseName.ToString() );
+		int uniqueNameSuffix = 1;
+		do {
+			uniqueName = uniqueNameBase + "_" + std::to_string( uniqueNameSuffix++ );
+		} while( stateNamesInUse.find( FName( uniqueName.c_str() ) ) != stateNamesInUse.end() );
+
+		baseName = FName( uniqueName.c_str() );
+	}
+
+	return baseName;
 }

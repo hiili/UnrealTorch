@@ -91,11 +91,11 @@ public:
 	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
 	const FName & getName();
 
+	/** Generates a unique Lua state name that is safe to use in an immediately following CreateLuaState() call. */
+	static FName MakeUniqueLuaStateName( FName baseName = FName( "default" ) );
+
 
 private:
-
-	/** Permit access to stateNamesInUse. */
-	friend FName UUthBlueprintStatics::MakeUniqueLuaStateName( FName );
 
 	/** The set of state names already in use. Used for Lua output redirection into unique log files. */
 	static std::set<FName> stateNamesInUse;
