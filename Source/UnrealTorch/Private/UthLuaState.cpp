@@ -48,7 +48,7 @@ UUthLuaState::UUthLuaState()
 
 
 	// Set the internal name of the object (we do not touch the UObject name system)
-	// Don't use setName() as it uses the utility module, which is not loaded yet
+	// Don't use setName() as it uses the Lualand utility module, which is not loaded yet
 	name = UUthBlueprintStatics::MakeUniqueLuaStateName( "default" );
 	stateNamesInUse.emplace( name );
 
