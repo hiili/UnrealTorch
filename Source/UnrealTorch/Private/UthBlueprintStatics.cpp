@@ -25,16 +25,8 @@ UUthLuaState * UUthBlueprintStatics::CreateLuaState( FName name /*= FName( "defa
 	// Create a new Lua state and set its name
 	lua = NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet );    // don't interfere with the UObject name system
 	if( !lua || !lua->isValid() ) return nullptr;
-	if( !lua->setName( name ) ) return nullptr;
+	lua->setName( name );
 
 	onError.release();
 	return lua;
-}
-
-
-
-
-FName UUthBlueprintStatics::MakeUniqueLuaStateName( FName baseName /*= FName( "default" ) */ )
-{
-	return UUthLuaState::MakeUniqueLuaStateName( baseName );
 }

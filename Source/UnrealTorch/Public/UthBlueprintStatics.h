@@ -49,6 +49,13 @@ public:
 	 *   1. Torch DLLs
 	 *   2. Project level DLLs: Content/Lua/bin/?.dll
 	 *
+	 * State name:
+	 *
+	 * The internal name of the state object is set to 'default' in the constructor. You can change it with setName() or
+	 * by using the Blueprint helper function CreateLuaState(). All log output from Lua will be redirected to
+	 * Saved\Logs\lua_<name>.log. Note that if you have several states with the same name, you will get the log output
+	 * of only one of them. The internal name of the state object is not related to UObject names; we do not use those.
+	 *
 	 * Object lifecycle and garbage collection:
 	 *
 	 * When a new Lua state is created using the Blueprint helper function CreateLuaState(), it will be added to the
@@ -57,9 +64,5 @@ public:
 	 */
 	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
 	static UUthLuaState * CreateLuaState( FName name = FName( "default" ) );
-	
-	/** Generates a unique Lua state name that is safe to use in an immediately following CreateLuaState() call. */
-	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
-	static FName MakeUniqueLuaStateName( FName baseName = FName( "default" ) );
 
 };

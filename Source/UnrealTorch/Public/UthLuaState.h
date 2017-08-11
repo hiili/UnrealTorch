@@ -52,7 +52,12 @@ public:
 	 *   1. Torch DLLs
 	 *   2. Project level DLLs: Content/Lua/bin/?.dll
 	 *
-	 * The internal name of the state object is set to 'default'. You can change it with setName().
+	 * State name:
+	 *
+	 * The internal name of the state object is set to 'default' in the constructor. You can change it with setName() or
+	 * by using the Blueprint helper function CreateLuaState(). All log output from Lua will be redirected to
+	 * Saved\Logs\lua_<name>.log. Note that if you have several states with the same name, you will get the log output
+	 * of only one of them. The internal name of the state object is not related to UObject names; we do not use those.
 	 *
 	 * Object lifecycle and garbage collection:
 	 *
@@ -77,33 +82,21 @@ public:
 	bool isValid();
 
 
-	/** Sets the internal name of the state object (the UObject name is not changed).
-	 *
-	 * All log output from Lua will be redirected to Saved\Logs\lua_<name>.log.
-	 * 
-	 * @return    True on success, false otherwise. The call will fail if the new name is already in use by another Lua
-	 *            state object.
-	 */
+	/** Sets the internal name of the state object (the UObject name is not changed). */
 	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
-	bool setName( FName name );
+	void setName( FName name );
 
 	/** Returns the current internal name of the state object. */
 	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
 	const FName & getName();
 
-	/** Generates a unique Lua state name that is safe to use in an immediately following CreateLuaState() call. */
-	static FName MakeUniqueLuaStateName( FName baseName = FName( "default" ) );
-
 
 private:
-
-	/** The set of state names already in use. Used for Lua output redirection into unique log files. */
-	static std::set<FName> stateNamesInUse;
 
 	/** Sol-wrapped Lua state instance */
 	std::unique_ptr<sol::state> lua;
 
 	/** The name of this Lua state. See setName(). */
-	FName name{ "(uninitialized)" };
+	FName name{ "default" };
 
 };
