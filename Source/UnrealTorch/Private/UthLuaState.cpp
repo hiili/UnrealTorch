@@ -92,7 +92,7 @@ UUthLuaState::UUthLuaState()
 					 "VeryVerbose", ELogVerbosity::VeryVerbose
 	);
 	(*lua)["uth"] = lua->create_table_with(
-		"statename", TCHAR_TO_UTF8( *name.ToString() ),
+		"statename", std::string( TCHAR_TO_UTF8( *name.ToString() ) ),
 		"ue", uth_ue
 	);
 
