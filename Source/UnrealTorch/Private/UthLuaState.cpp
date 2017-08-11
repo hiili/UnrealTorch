@@ -130,6 +130,14 @@ bool UUthLuaState::isValid()
 
 
 
+sol::state & UUthLuaState::getLuaState()
+{
+	check( isValid() );
+
+	return *lua;
+}
+
+
 void UUthLuaState::setName( FName newName )
 {
 	check( isValid() );

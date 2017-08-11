@@ -82,6 +82,9 @@ public:
 	bool isValid();
 
 
+	/** Returns a reference to the internal Sol2 Lua state object. */
+	sol::state & getLuaState();
+
 	/** Sets the internal name of the state object (the UObject name is not changed). */
 	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
 	void setName( FName name );
