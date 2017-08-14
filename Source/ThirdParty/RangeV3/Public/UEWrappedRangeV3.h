@@ -1,11 +1,8 @@
-// include Range-v3
 #pragma warning( push )
-#pragma warning( disable: 4268 4668 )    // UE pollution.. let's hope that this does not break anything
-#pragma push_macro("check")
-#pragma push_macro("PI")
-#undef check
-#undef PI
+#pragma warning( disable: 4268 4582 4583 4868 )
+
+#include "UndefineMacros_UE_4.17.h"
 #include <range/v3/all.hpp>
-#pragma pop_macro("PI")
-#pragma pop_macro("check")
+#include "RedefineMacros_UE_4.17.h"
+
 #pragma warning( pop )
