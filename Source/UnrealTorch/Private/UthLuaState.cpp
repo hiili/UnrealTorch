@@ -151,7 +151,7 @@ void UUthLuaState::setName( FName newName )
 }
 
 
-const FName & UUthLuaState::getName()
+FName UUthLuaState::getName()
 {
 	return name;
 }

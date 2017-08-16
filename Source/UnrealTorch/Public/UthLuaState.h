@@ -91,7 +91,7 @@ public:
 
 	/** Returns the current internal name of the state object. */
 	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
-	const FName & getName();
+	FName getName();
 
 
 private:
