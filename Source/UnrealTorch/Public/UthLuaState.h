@@ -3,26 +3,29 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
-#include "UthBlueprintStatics.generated.h"
+#include "UObject/NoExportTypes.h"
 
+#include "UEWrappedSol2.h"    // UBT does not seem to play with unique_ptr and forward declarations..
 
-class UUthLuaState;
+#include <set>
+#include <memory>
+
+#include "UthLuaState.generated.h"
 
 
 
 
 /**
- * 
+ * Represents a Lua state.
  */
-UCLASS()
-class UNREALTORCH_API UUthBlueprintStatics : public UBlueprintFunctionLibrary
+UCLASS( Blueprintable, BlueprintType, meta = (DisplayName = "Lua State") )
+class UNREALTORCH_API UUthLuaState : public UObject
 {
 	GENERATED_BODY()
 
 public:
 
-	// comment block copy at UUthLuaState::UUthLuaState()
+	// comment block copy at UUthBlueprintStatics::CreateLuaState()
 	/** Constructs a new UthLuaState object, creating a new Lua state and initializing it.
 	 *
 	 * In C++, Use factory helpers like UUthBlueprintStatics::CreateLuaState() or UE's NewObject() to create instances
@@ -71,12 +74,46 @@ public:
 	 * class are managed by the UE garbage collector. Consequently, you shouldn't neither use any smart pointers with
 	 * instances of this class.
 	 * 
-	 * @param name						Internal name of the object. Affects logging; see below.
-	 * @param protectFromGC (C++ only)	If true, then the object will be added to the GC root set. See below for
-	 *									details.
+	 * @param name						Internal name of the object. Affects logging; see full comments.
+	 * @param protectFromGC (C++ only)	If true, then the object will be added to the GC root set. See full comments.
 	 * @return	Returns a valid instance of the class (isValid() == true), or nullptr on any error.
 	 */
-	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua", meta = ( HidePin = "protectFromGC" ) )
-	static UUthLuaState * CreateLuaState( FName name = FName( "default" ), bool protectFromGC = false );
+	UUthLuaState();
+
+	/** Never explicitly delete instances of UObject-derived classes like this: instances of this class are managed by
+	 * the UE garbage collector. */
+	virtual ~UUthLuaState();
+
+	/** Immediately deletes the Lua state and starts the UObject destruction process.
+	 *
+	 * This method is safe to call even if the object has been added to the GC root set, in which case it will be
+	 * unrooted first.
+	 */
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	void destroy();
+
+	/** Checks whether the object is in a valid, usable state: the Lua state exists, UObject is not pending kill, .. */
+	bool isValid();
+
+
+	/** Returns a reference to the internal Sol2 Lua state object. */
+	sol::state & getLuaState();
+
+	/** Sets the internal name of the state object (the UObject name is not changed). */
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	void setName( FName name );
+
+	/** Returns the current internal name of the state object. */
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	FName getName();
+
+
+private:
+
+	/** Sol-wrapped Lua state instance */
+	std::unique_ptr<sol::state> lua;
+
+	/** The name of this Lua state. See setName(). */
+	FName name{ "default" };
 
 };
