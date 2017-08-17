@@ -13,7 +13,7 @@
 #if WITH_DEV_AUTOMATION_TESTS
 
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST( FUthBlueprintStaticsTest, "UnrealTorch.UthBlueprintStatics",
+IMPLEMENT_SIMPLE_AUTOMATION_TEST( FUthBlueprintStaticsTest, "Project.UthBlueprintStatics",
 								  EAutomationTestFlags::ApplicationContextMask |
 								  EAutomationTestFlags::ProductFilter )
 
