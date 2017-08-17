@@ -62,7 +62,7 @@ public:
 	 * root set of UObjects and thus excluded from garbage collection. Use UUthLuaState::destroy() to send it toward
 	 * destruction. It is safe to call RemoveFromRoot() on the created object if you wish to put it under GC.
 	 */
-	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
-	static UUthLuaState * CreateLuaState( FName name = FName( "default" ) );
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua", meta = ( HidePin = "protectFromGC" ) )
+	static UUthLuaState * CreateLuaState( FName name = FName( "default" ), bool protectFromGC = false );
 
 };

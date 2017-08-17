@@ -8,7 +8,7 @@
 
 
 
-UUthLuaState * UUthBlueprintStatics::CreateLuaState( FName name /*= FName( "default" ) */ )
+UUthLuaState * UUthBlueprintStatics::CreateLuaState( FName name /*= FName( "default" ) */, bool protectFromGC /*= false */ )
 {
 	UUthLuaState * lua = nullptr;
 	
@@ -23,7 +23,7 @@ UUthLuaState * UUthBlueprintStatics::CreateLuaState( FName name /*= FName( "defa
 	} );
 
 	// Create a new Lua state and set its name
-	lua = NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet );    // don't interfere with the UObject name system
+	lua = NewObject<UUthLuaState>( GetTransientPackage(), FName(), protectFromGC ? RF_MarkAsRootSet : RF_NoFlags );    // don't interfere with the UObject name system
 	if( !lua || !lua->isValid() ) return nullptr;
 	lua->setName( name );
 
