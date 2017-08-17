@@ -25,6 +25,9 @@ public:
 	// comment block copy at UUthLuaState::UUthLuaState()
 	/** Constructs a new UthLuaState object, creating a new Lua state and initializing it.
 	 *
+	 * In C++, Use factory helpers like UUthBlueprintStatics::CreateLuaState() or UE's NewObject() to create instances
+	 * of this class. Never explicitly delete these instances; instead use the destroy() method.
+	 *
 	 * A new Lua state is created and initialized with all Torch-related paths set, necessary packages and dlls loaded,
 	 * and a set of utility functions defined.
 	 *
@@ -49,18 +52,29 @@ public:
 	 *   1. Torch DLLs
 	 *   2. Project level DLLs: Content/Lua/bin/?.dll
 	 *
-	 * State name:
+	 * State name and Lua output:
 	 *
 	 * The internal name of the state object is set to 'default' in the constructor. You can change it with setName() or
-	 * by using the Blueprint helper function CreateLuaState(). All log output from Lua will be redirected to
-	 * Saved\Logs\lua_<name>.log. Note that if you have several states with the same name, you will get the log output
-	 * of only one of them. The internal name of the state object is not related to UObject names; we do not use those.
+	 * by using the Blueprint helper function CreateLuaState(). All Lua output from io.write(), print() and LOG() will
+	 * be redirected to Saved\Logs\lua_<name>.log. Note that if you have several states with the same name, you will get
+	 * the output of only one of them. The internal name of the state object is not related to UObject names; we do not
+	 * use those.
 	 *
-	 * Object lifecycle and garbage collection:
+	 * (C++ only) Object lifecycle and garbage collection:
 	 *
-	 * When a new Lua state is created using the Blueprint helper function CreateLuaState(), it will be added to the
-	 * root set of UObjects and thus excluded from garbage collection. Use UUthLuaState::destroy() to send it toward
-	 * destruction. It is safe to call RemoveFromRoot() on the created object if you wish to put it under GC.
+	 * When a new Lua state is created using the factory helper UUthBlueprintStatics::CreateLuaState() and the parameter
+	 * 'protectFromGC' is to true, the object will be added to the root set of UObjects and thus excluded from garbage
+	 * collection. Use UUthLuaState::destroy() to send it toward destruction. If the parameter 'protectFromGC' is left
+	 * false, then make sure that you always keep at least one UPROPERTY pointer to the obtained instance.
+	 *
+	 * IMPORTANT NOTE: In C++, Never explicitly delete instances of UObject-derived classes like this: instances of this
+	 * class are managed by the UE garbage collector. Consequently, you shouldn't neither use any smart pointers with
+	 * instances of this class.
+	 * 
+	 * @param name						Internal name of the object. Affects logging; see below.
+	 * @param protectFromGC (C++ only)	If true, then the object will be added to the GC root set. See below for
+	 *									details.
+	 * @return	Returns a valid instance of the class (isValid() == true), or nullptr on any error.
 	 */
 	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua", meta = ( HidePin = "protectFromGC" ) )
 	static UUthLuaState * CreateLuaState( FName name = FName( "default" ), bool protectFromGC = false );
