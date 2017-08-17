@@ -27,6 +27,10 @@ UUthLuaState * UUthBlueprintStatics::CreateLuaState( FName name /*= FName( "defa
 	if( !lua || !lua->isValid() ) return nullptr;
 	lua->setName( name );
 
+	// Invariant: Returned objects are always valid
+	check( lua->isValid() );
+
+	// Return it
 	onError.release();
 	return lua;
 }
