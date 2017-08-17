@@ -96,6 +96,9 @@ UUthLuaState::UUthLuaState()
 		// We won't get a stack traceback this way; to get one, we should use a protected_function (cf. https://github.com/ThePhD/sol2/issues/280)
 		// but that leads to a rather convoluted call syntax
 		UE_LOG( LogUnrealTorch, Error, TEXT( "Failed to do uth/init.lua: %s" ), UTF8_TO_TCHAR( error.what() ) );
+
+		// Delete the Lua state. isValid() will return false for this object.
+		lua.reset();
 	}
 }
 
