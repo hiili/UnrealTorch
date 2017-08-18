@@ -104,7 +104,7 @@ public:
 	void setName( FName name );
 
 	/** Returns the current internal name of the state object. */
-	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	UFUNCTION( BlueprintCallable, BlueprintPure, Category = "Unreal Torch|Lua" )
 	FName getName();
 
 
