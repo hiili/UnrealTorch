@@ -25,8 +25,13 @@ public:
 	// comment block copy at UUthLuaState::UUthLuaState()
 	/** Constructs a new UthLuaState object, creating a new Lua state and initializing it.
 	 *
-	 * In C++, Use factory helpers like UUthBlueprintStatics::CreateLuaState() or UE's NewObject() to create instances
-	 * of this class. Never explicitly delete these instances; instead use the destroy() method.
+	 * Blueprint users: Make sure to immediately store the returned object in a variable. Using the return value
+	 * directly by pulling wires from the return node works only as long as no-one and nothing triggers the garbage
+	 * collector; Blueprint return nodes _do not_ hold and protect objects from being collected.
+	 *
+	 * C++ users: Use factory helpers like UUthBlueprintStatics::CreateLuaState() or UE's NewObject() to create
+	 * instances of this class. Never explicitly delete these instances; instead use the destroy() method. See the
+	 * section below on object lifecycle for more details.
 	 *
 	 * A new Lua state is created and initialized with all Torch-related paths set, necessary packages and dlls loaded,
 	 * and a set of utility functions defined.
@@ -64,11 +69,11 @@ public:
 	 *
 	 * When a new Lua state is created using the factory helper UUthBlueprintStatics::CreateLuaState() and the parameter
 	 * 'protectFromGC' is to true, the object will be added to the root set of UObjects and thus excluded from garbage
-	 * collection. Use UUthLuaState::destroy() to send it toward destruction. If the parameter 'protectFromGC' is left
-	 * false, then make sure that you always keep at least one UPROPERTY pointer to the obtained instance.
+	 * collection. Use UUthLuaState::destroy() to force-send it toward destruction. If the parameter 'protectFromGC' is
+	 * left false, then make sure that you always keep at least one UPROPERTY pointer to the obtained instance.
 	 *
 	 * IMPORTANT NOTE: In C++, Never explicitly delete instances of UObject-derived classes like this: instances of this
-	 * class are managed by the UE garbage collector. Consequently, you shouldn't neither use any smart pointers with
+	 * class are managed by the UE garbage collector. Consequently, neither should you use any smart pointers with
 	 * instances of this class.
 	 * 
 	 * @param name						Internal name of the object. Affects logging; see below.
