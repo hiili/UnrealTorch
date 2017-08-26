@@ -158,3 +158,23 @@ FName UUthLuaState::getName()
 {
 	return name;
 }
+
+
+
+
+bool UUthLuaState::script( const FString & script )
+{
+	check( isValid() );
+
+	try
+	{
+		lua->script( TCHAR_TO_UTF8( *script ), sol::default_on_error );
+	}
+	catch( const sol::error & error )
+	{
+		UE_LOG( LogUnrealTorch, Error, TEXT( "(%s) Failed to run script: %s" ), TEXT(__FUNCTION__), UTF8_TO_TCHAR( error.what() ) );
+		return false;
+	}
+
+	return true;
+}

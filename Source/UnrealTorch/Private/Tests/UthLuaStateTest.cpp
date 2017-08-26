@@ -70,6 +70,22 @@ bool FUthLuaStateTest::RunTest( const FString & Parameters )
 		luaC2->destroy(); luaC2 = nullptr;
 	}
 
+	// UUthLuaState::script()
+	{
+		UUthLuaState * lua{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
+
+		TestTrue( TEXT( "UthLuaState::script(<valid expression>) -> true" ), lua->script("x1 = 1 + 1") );
+
+		AddExpectedError( TEXT( ".UUthLuaState::script. Failed to run script: runtime error .string .x2 = 1 . 1 . initially_undefined_variable..:1: attempt to perform arithmetic on global 'initially_undefined_variable' .a nil value." ),
+						  EAutomationExpectedErrorFlags::Exact, 1 );
+		TestFalse( TEXT( "UthLuaState::script(<invalid expression>) -> false" ), lua->script( "x2 = 1 + 1 + initially_undefined_variable" ) );
+
+		lua->script( "initially_undefined_variable = 10" );
+		TestTrue( TEXT( "UthLuaState::script(<set x>); UthLuaState::script(<use x>) -> true" ), lua->script( "x3 = 1 + 1 + initially_undefined_variable" ) );
+
+		lua->destroy(); lua = nullptr;
+	}
+
 	return true;
 }
 

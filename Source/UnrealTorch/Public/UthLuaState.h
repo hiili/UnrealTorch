@@ -120,6 +120,14 @@ public:
 	FName getName();
 
 
+	/** Executes a string as a Lua script.
+	 *
+	 * @return    True on success, false on any Lua error.
+	 */
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	UPARAM(DisplayName="Success") bool script( const FString & script );
+
+
 private:
 
 	/** Sol-wrapped Lua state instance */
