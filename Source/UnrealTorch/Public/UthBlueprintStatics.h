@@ -38,6 +38,16 @@ public:
 	 *
 	 * All Lua standard libraries are opened.
 	 *
+	 * Torch is imported into the global variable 'torch'.
+	 *
+	 * The UnrealTorch utility module is imported into 'uth.utility'; for available functions, see the following file:
+	 *   Plugins\UnrealTorch\Source\UnrealTorch\Private\lua\uth\utility.lua.
+	 *
+	 * A generic logger from the utility module is copied, with its verbosity level enumeration, to the global variable
+	 * LOG and ELogVerbosity. Verbosity levels follow the UE_LOG() verbosity levels. See also section 'State name and
+	 * Lua output' below. Usage:
+	 *   LOG( ELogVerbosity.Warning, 'Log message here' )
+	 *
 	 * A global variable 'uth' is created with the following structure:
 	 *   uth								The main table for all UnrealTorch data
 	 *     .statename						Name of this state; see UUthLuaState.setName()
