@@ -5,8 +5,10 @@
 #include "UthLuaState.h"
 
 #include "UObjectGlobals.h"
+#include "Paths.h"
 
 #include <memory>
+#include <fstream>
 
 
 #if WITH_DEV_AUTOMATION_TESTS
@@ -84,6 +86,52 @@ bool FUthLuaStateTest::RunTest( const FString & Parameters )
 		TestTrue( TEXT( "UthLuaState::script(<set x>); UthLuaState::script(<use x>) -> true" ), lua->script( "x3 = 1 + 1 + initially_undefined_variable" ) );
 
 		lua->destroy(); lua = nullptr;
+	}
+
+	// Logging from Lua to UE_LOG
+	{
+		UUthLuaState * lua{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
+
+		AddExpectedError( TEXT( ".. Test error message from Lua via UE_LOG" ), EAutomationExpectedErrorFlags::Exact, 1 );
+		TestTrue( TEXT( "UthLuaState: Lua call to uth.ue.UE_LOG() works." ),
+				  lua->script( "uth.ue.UE_LOG( uth.ue.ELogVerbosity.Error, 'Test error message from Lua via UE_LOG' )" ) );
+
+		lua->destroy(); lua = nullptr;
+	}
+
+	// Lua logging and output
+	{
+		std::string BaseDirGameLogs = TCHAR_TO_UTF8( *FPaths::GameLogDir() );
+
+		UUthLuaState * lua{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
+
+		// Set state name and define the expected log file name
+		lua->setName( "LuaStateLoggingTest" );
+		std::string expectedLogFileName{ BaseDirGameLogs + "/lua_LuaStateLoggingTest.log" };
+
+		// Write to log and define the expected log contents
+		lua->script( R"(  print('Test print()')  )" );
+		lua->script( R"(  io.write('Test io.write()\n')  )" );
+		lua->script( R"(  LOG( ELogVerbosity.Log, 'Test LOG()')  )" );
+		const std::array<std::string, 3> expectedLogLines{ {
+				"[print] Test print()",
+				"Test io.write()",
+				"[Log] [] Test LOG()",
+			} };
+
+		// Destroy the state so as to close the log file
+		lua->destroy(); lua = nullptr;
+
+		// Compare the log file to the expected lines
+		std::ifstream logFile( expectedLogFileName, std::ios_base::in );
+		std::string logLine;
+		for( auto & expectedLogLine : expectedLogLines )
+		{
+			TestTrue( TEXT( "UthLuaState: Lua calls to print(), io.write() and LOG() cause expected output in the log file." ),
+					  getline( logFile, logLine ) && logLine == expectedLogLine );
+		}
+
+		logFile.close();
 	}
 
 	return true;
