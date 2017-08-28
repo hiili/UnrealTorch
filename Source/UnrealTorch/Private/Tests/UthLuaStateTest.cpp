@@ -60,8 +60,7 @@ bool FUthLuaStateTest::RunTest( const FString & Parameters )
 	{
 		UUthLuaState * luaC1{ NewObject<UUthLuaState>( GetTransientPackage(), FName() ) };    // becomes a dangling pointer after next GC round
 		UUthLuaState * luaC2{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
-
-		TestTrue( TEXT( "(sanity check; we tested this already)" ), luaC1->isValid() && luaC2->isValid() );
+		check( luaC1 && luaC1->isValid() && luaC2 && luaC2->isValid() );
 
 		CollectGarbage( RF_NoFlags, /*full purge =*/ true );
 		luaC1 = nullptr;
@@ -75,6 +74,7 @@ bool FUthLuaStateTest::RunTest( const FString & Parameters )
 	// UUthLuaState::script()
 	{
 		UUthLuaState * lua{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
+		check( lua && lua->isValid() );
 
 		TestTrue( TEXT( "UthLuaState::script(<valid expression>) -> true" ), lua->script("x1 = 1 + 1") );
 
@@ -91,6 +91,7 @@ bool FUthLuaStateTest::RunTest( const FString & Parameters )
 	// Logging from Lua to UE_LOG
 	{
 		UUthLuaState * lua{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
+		check( lua && lua->isValid() );
 
 		AddExpectedError( TEXT( ".. Test error message from Lua via UE_LOG" ), EAutomationExpectedErrorFlags::Exact, 1 );
 		TestTrue( TEXT( "UthLuaState: Lua call to uth.ue.UE_LOG() works." ),
@@ -104,6 +105,7 @@ bool FUthLuaStateTest::RunTest( const FString & Parameters )
 		std::string BaseDirGameLogs = TCHAR_TO_UTF8( *FPaths::GameLogDir() );
 
 		UUthLuaState * lua{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
+		check( lua && lua->isValid() );
 
 		// Set state name and define the expected log file name
 		lua->setName( "LuaStateLoggingTest" );
