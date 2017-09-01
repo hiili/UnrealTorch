@@ -82,7 +82,7 @@ UUthLuaState::UUthLuaState()
 					 "VeryVerbose", ELogVerbosity::VeryVerbose
 	);
 	(*lua)["uth"] = lua->create_table_with(
-		"statename", std::string( TCHAR_TO_UTF8( *name.ToString() ) ),
+		"statename", *name.ToString(),
 		"ue", uth_ue
 	);
 
@@ -149,7 +149,7 @@ void UUthLuaState::setName( FName newName )
 	name = newName;
 
 	// Set it in Lualand and re-redirect Lua output accordingly
-	(*lua)["uth"]["statename"] = std::string( TCHAR_TO_UTF8( *name.ToString() ) );    // Sol seems to eat TCHARs too, but play safe; std::string is needed to avoid some macro issue or whatever
+	(*lua)["uth"]["statename"] = *name.ToString();
 	(*lua)["uth"]["utility"]["redirect_output"]();
 }
 

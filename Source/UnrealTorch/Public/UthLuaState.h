@@ -92,6 +92,9 @@ public:
 
 	/** Immediately deletes the Lua state and starts the UObject destruction process.
 	 *
+	 * After calling this method, you should consider any pointers to the object as invalid; you can (and should) null
+	 * them and let the UE garbage collector take care of the object.
+	 *
 	 * This method is safe to call even if the object has been added to the GC root set, in which case it will be
 	 * unrooted first.
 	 */

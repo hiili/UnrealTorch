@@ -21,6 +21,7 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST( FUthLuaStateTest, "Project.UthLuaState",
 
 bool FUthLuaStateTest::RunTest( const FString & Parameters )
 {
+	// Object construction, destruction and naming
 	{
 		UUthLuaState * luaC1{ NewObject<UUthLuaState>( GetTransientPackage(), FName() ) };    // becomes a dangling pointer after next GC round
 		UUthLuaState * luaC2{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
@@ -53,6 +54,7 @@ bool FUthLuaStateTest::RunTest( const FString & Parameters )
 		TestFalse( TEXT( "UthLuaState created in C++ via NewObject() with MarkAsRootSet flag: destroy() => isValid() == false" ), luaC2_PendingKill->isValid() );
 	}
 
+	// Object lifetime and garbage collection
 	{
 		UUthLuaState * luaC1{ NewObject<UUthLuaState>( GetTransientPackage(), FName() ) };    // becomes a dangling pointer after next GC round
 		UUthLuaState * luaC2{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
