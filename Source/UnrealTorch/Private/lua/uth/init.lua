@@ -78,4 +78,4 @@ uth.utility.redirect_output()
 
 -- Run manual tests
 local tests = require( 'uth.tests' )
-tests.run()
+--tests.run()
