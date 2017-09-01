@@ -146,6 +146,65 @@ bool FUthLuaStateTest::RunTest( const FString & Parameters )
 		logFile.close();
 	}
 
+	// setVariableNumber()
+	{
+		UUthLuaState * lua{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
+		check( lua && lua->isValid() );
+		bool ok;
+
+		{
+			float var_expected = 123.456f;
+			ok = lua->setVariableNumber( "var1", var_expected );
+			TestTrue( TEXT( "UthLuaState: setVariableNumber( <var>, 123.456f ) return status" ), ok );
+
+			float var_actual = lua->getLuaState()["var1"];
+			TestEqual( TEXT( "UthLuaState: setVariableNumber( <var>, 123.456f ); lua[<var>]" ),
+					   var_actual,
+					   var_expected );
+		}
+
+		{
+			ok = lua->script( R"( table = { subtable = { subsubtable = {} } } )" );
+			check( ok );
+
+			float var_expected = 123.456f;
+			ok = lua->setVariableNumber( "table.subtable.subsubtable.var", var_expected );
+			TestTrue( TEXT( "UthLuaState: setVariableNumber( <var with path>, 123.456f ) return status" ), ok );
+
+			float var_actual = lua->getLuaState()["table"]["subtable"]["subsubtable"]["var"];
+			TestEqual( TEXT( "UthLuaState: setVariableNumber( <var with path>, 123.456f ); lua[<path1>]...[<var>]" ),
+					   var_actual,
+					   var_expected );
+		}
+
+		lua->destroy(); lua = nullptr;
+	}
+
+	// getVariableNumber()
+	{
+		UUthLuaState * lua{ NewObject<UUthLuaState>( GetTransientPackage(), FName(), RF_MarkAsRootSet ) };
+		check( lua && lua->isValid() );
+		bool ok;
+
+		{
+			ok = lua->script( R"( table = { subtable = { subsubtable = {} } } )" );
+			check( ok );
+
+			float var_expected = 123.456f;
+			lua->getLuaState()["table"]["subtable"]["subsubtable"]["var"] = var_expected;
+
+			float var_actual = lua->getVariableNumber( "table.subtable.subsubtable.var", ok );
+			TestTrue( TEXT( "UthLuaState: getVariableNumber( <var with path> ) return status" ), ok );
+			
+			TestEqual( TEXT( "UthLuaState: lua[<path1>]...[<var>] = 123.456f; getVariableNumber( <var with path> )" ),
+					   var_actual,
+					   var_expected );
+		}
+
+		lua->destroy(); lua = nullptr;
+	}
+
+
 	return true;
 }
 
