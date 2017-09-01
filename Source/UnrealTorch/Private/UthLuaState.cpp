@@ -10,6 +10,8 @@
 #include <set>
 #include <memory>
 #include <string>
+#include <cstring>
+#include <tuple>
 
 
 
@@ -172,9 +174,81 @@ bool UUthLuaState::script( const FString & script )
 	}
 	catch( const sol::error & error )
 	{
-		UE_LOG( LogUnrealTorch, Error, TEXT( "(%s) Failed to run script: %s" ), TEXT(__FUNCTION__), UTF8_TO_TCHAR( error.what() ) );
+		UE_LOG( LogUnrealTorch, Error, TEXT( "(%s) Failed to run script: %s" ), TEXT( __FUNCTION__ ), UTF8_TO_TCHAR( error.what() ) );
 		return false;
 	}
 
 	return true;
+}
+
+
+
+
+template<typename T>
+bool UUthLuaState::setVariable( const FString & name, const T & value )
+{
+	check( isValid() );
+
+	try
+	{
+		// Copy name into modifiable buffer
+		std::string nameBuffer{ TCHAR_TO_UTF8( *name ) };
+
+		// Get the subtable that contains the variable
+		sol::table subtable;
+		char * nameWithoutPath;
+		std::tie( subtable, nameWithoutPath ) = getSubtableAndName( lua->globals(), const_cast<char *>(nameBuffer.data()) );    // modifies nameBuffer
+
+		// Set the variable
+		subtable[nameWithoutPath] = value;
+
+		return true;
+	}
+	catch( const sol::error & error )
+	{
+		UE_LOG( LogUnrealTorch, Error, TEXT( "(%s) Failed to set variable '%s': %s" ), TEXT( __FUNCTION__ ), *name, UTF8_TO_TCHAR( error.what() ) );
+		return false;
+	}
+}
+
+
+template<typename T>
+T UUthLuaState::getVariable( const FString & name, bool & success )
+{
+	check( isValid() );
+	success = true;
+
+	try
+	{
+		// Copy name into modifiable buffer
+		std::string nameBuffer{ TCHAR_TO_UTF8( *name ) };
+
+		// Get the subtable that contains the variable
+		sol::table subtable;
+		char * nameWithoutPath;
+		std::tie( subtable, nameWithoutPath ) = getSubtableAndName( lua->globals(), const_cast<char *>(nameBuffer.data()) );    // modifies nameBuffer
+
+		// Get the variable
+		return subtable[nameWithoutPath];
+	}
+	catch( const sol::error & error )
+	{
+		UE_LOG( LogUnrealTorch, Error, TEXT( "(%s) Failed to get variable '%s': %s" ), TEXT( __FUNCTION__ ), *name, UTF8_TO_TCHAR( error.what() ) );
+		success = false;
+		return T{};
+	}
+}
+
+
+std::tuple<sol::table, char *> UUthLuaState::getSubtableAndName( sol::table table, char * name )
+{
+	// Find next path element separator
+	char * elementEnd = std::strchr( name, '.' );
+
+	// Stop if already at the last element (which is the variable itself)
+	if( !elementEnd ) return std::make_tuple( table, name );
+
+	// Drill in
+	*elementEnd = '\0';    // Split into head and tail
+	return getSubtableAndName( table[name], elementEnd + 1 );
 }

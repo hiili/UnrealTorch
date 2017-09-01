@@ -138,6 +138,42 @@ public:
 	UPARAM(DisplayName="Success") bool script( const FString & script );
 
 
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	UPARAM(DisplayName="Success") bool setVariableToNil( const FString & name )
+	{ return setVariable( name, sol::nil ); }
+
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	UPARAM(DisplayName="Success") bool setVariableBoolean( const FString & name, bool value )
+	{ return setVariable( name, value ); }
+
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	UPARAM(DisplayName="Success") bool setVariableNumber( const FString & name, float value )
+	{ return setVariable( name, value ); }
+
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	UPARAM(DisplayName="Success") bool setVariableString( const FString & name, const FString & value )
+	{ return setVariable( name, TCHAR_TO_UTF8( *value ) ); }
+
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	UPARAM(DisplayName="Success") bool setVariableToEmptyTable( const FString & name )
+	{ return setVariable( name, sol::table{} ); }
+
+
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	bool getVariableBoolean( const FString & name, bool & success )
+	{ return getVariable<bool>( name, success ); }
+
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	float getVariableNumber( const FString & name, bool & success )
+	{ return getVariable<float>( name, success ); }
+
+	UFUNCTION( BlueprintCallable, Category = "Unreal Torch|Lua" )
+	FString getVariableString( const FString & name, bool & success )
+	{ return getVariable<FString>( name, success ); }
+
+
+
+
 private:
 
 	/** Sol-wrapped Lua state instance */
@@ -145,5 +181,26 @@ private:
 
 	/** The name of this Lua state. See setName(). */
 	FName name{ "default" };
+
+	/** Sets the Lua variable specified by 'name'.
+	 *
+	 * @param name    The variable path and name, relative to the global table. Example: "table.subtable.variable"
+	 * @param value   The value to be stored into the variable.
+	 * @return        True on success, otherwise false.
+	 */
+	template<typename T>
+	bool setVariable( const FString & name, const T & value );
+
+	template<typename T>
+	T getVariable( const FString & name, bool & success );
+
+	/** Given a variable name with a preceding subtable path, obtains the innermost table and the plain variable name.
+	 *
+	 * @param table    The base Lua table.
+	 * @param name     The variable path and name, relative to 'table'. Example: "subtable1.subtable2.variable"
+	 *                 Note: the pointed null-terminated string will be modified in-place!
+	 * @return         A tuple consisting of the innermost table and the plain variable name.
+	 */
+	std::tuple<sol::table, char *> getSubtableAndName( sol::table table, char * name );
 
 };
