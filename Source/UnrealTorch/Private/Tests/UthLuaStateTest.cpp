@@ -14,7 +14,7 @@
 #if WITH_DEV_AUTOMATION_TESTS
 
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST( FUthLuaStateTest, "Project.UthLuaState",
+IMPLEMENT_SIMPLE_AUTOMATION_TEST( FUthLuaStateTest, "Project.UnrealTorch.UthLuaState",
 								  EAutomationTestFlags::ApplicationContextMask |
 								  EAutomationTestFlags::ProductFilter )
 
